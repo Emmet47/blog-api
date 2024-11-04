@@ -1,0 +1,50 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kle
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www
+    networks:
+      - kle-blog-network
+
+  db:
+    image: mysql:8.0
+    container_name: kle-blog-db
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: kle-blog-db
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: root
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    networks:
+      - kle-blog-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadminkle2
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: laravel_user
+      PMA_PASSWORD: root
+    networks:
+      - kle-blog-network
+
+networks:
+  kle-blog-network:
+    external: true
+
+volumes:
+  mysql-data:
